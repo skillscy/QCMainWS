@@ -27,7 +27,7 @@ public class QCMainWSController {
     }
 
     @GetMapping(value = "/api/v1/youtube", produces = "application/json")
-    @ApiOperation(value = "This API will return the requested number of latest videos from the requested YouTube channel ID", produces = "application/json")
+    @ApiOperation(value = "This API will return the requested number of latest videos from the requested YouTube channel ID", produces = "application/json", response = WebServiceCommonResponse.class)
     public ResponseEntity<WebServiceCommonResponse> getLatestYouTubeVideoList(@RequestHeader("channel_id") String channelID, @RequestHeader(value = "count", required = false, defaultValue = "3") int count) {
         try {
             List<YouTubeCardResponse> a = service.getYouTubeVideoInfo(channelID, count);
