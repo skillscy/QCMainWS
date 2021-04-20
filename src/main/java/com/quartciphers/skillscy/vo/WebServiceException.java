@@ -23,7 +23,7 @@ public class WebServiceException extends Exception {
     }
 
     public ResponseEntity<WebServiceCommonResponse> response() {
-        WebServiceCommonResponse commonResponse = new WebServiceCommonResponse(null);
+        WebServiceCommonResponse commonResponse = new WebServiceCommonResponse();
         ErrorResponse errorResponse = new ErrorResponse();
 
         commonResponse.setSuccess(false);

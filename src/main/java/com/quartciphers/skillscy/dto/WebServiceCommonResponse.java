@@ -12,6 +12,9 @@ public class WebServiceCommonResponse {
     private ErrorResponse error;
     private Object data;
 
+    public WebServiceCommonResponse() {
+    }
+
     public WebServiceCommonResponse(Object data) {
         this.data = data;
     }
@@ -45,7 +48,11 @@ public class WebServiceCommonResponse {
 
     public ResponseEntity<WebServiceCommonResponse> response() {
         this.setSuccess(true);
-        return new ResponseEntity<>(this, HttpStatus.OK);
+
+        if (this.data != null)
+            return new ResponseEntity<>(this, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(this, HttpStatus.NO_CONTENT);
     }
 
 }
