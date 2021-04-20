@@ -3,6 +3,7 @@ package com.quartciphers.skillscy.vo;
 public enum ApplicationCodes {
 
     NO_BODY_FOUND(1051, "Null response body found"),
+    VALIDATION_NULL_FOUND(1052, "Null object found in a non-null place"),
 
     /* '/youtube' */
     INVALID_OR_NO_VIDEO_CHANNEL(1100, "The requested channel is invalid or it doesn't contain any video");

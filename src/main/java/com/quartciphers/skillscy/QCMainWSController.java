@@ -5,6 +5,7 @@ import com.quartciphers.skillscy.dto.MailContent;
 import com.quartciphers.skillscy.dto.WebServiceCommonResponse;
 import com.quartciphers.skillscy.dto.YouTubeCardResponse;
 import com.quartciphers.skillscy.service.QCMainWSServiceV1;
+import com.quartciphers.skillscy.vo.Validator;
 import com.quartciphers.skillscy.vo.WebServiceException;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,18 @@ class QCMainWSControllerVersion1 {
     @ApiOperation(value = "This API will send a mail to the client E-Mail ID", produces = "application/json", response = WebServiceCommonResponse.class)
     public ResponseEntity<WebServiceCommonResponse> sendMailToClient(@RequestBody MailContent mailContent) {
         try {
+            // Validation
+            Validator.notNull(mailContent);
+            Validator.notNull(mailContent.getClientInfo());
+            Validator.notNull(mailContent.getClientInfo().getName());
+            Validator.notNull(mailContent.getClientInfo().getMailAddress());
+            Validator.notNull(mailContent.getClientInfo().getMailSubject());
+            Validator.notNull(mailContent.getName());
+            Validator.notNull(mailContent.geteMailID());
+            Validator.notNull(mailContent.getPhoneNumber());
+            Validator.notNull(mailContent.getMessage());
+
+            // Connecting to service layer
             service.sendMessageToClient(mailContent);
             return new WebServiceCommonResponse().response();
         } catch (WebServiceException wex) {

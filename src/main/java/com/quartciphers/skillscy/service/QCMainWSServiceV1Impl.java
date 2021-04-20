@@ -3,6 +3,7 @@ package com.quartciphers.skillscy.service;
 import com.quartciphers.skillscy.dto.MailContent;
 import com.quartciphers.skillscy.dto.SendInBlueAPI.ContactInfo;
 import com.quartciphers.skillscy.dto.SendInBlueAPI.ContentBody;
+import com.quartciphers.skillscy.dto.SendInBlueAPI.SendInBlueAPIResponse;
 import com.quartciphers.skillscy.dto.YouTubeAPI.ItemInfo;
 import com.quartciphers.skillscy.dto.YouTubeAPI.YouTubeAPIResponse;
 import com.quartciphers.skillscy.dto.YouTubeCardResponse;
@@ -108,6 +109,7 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
 
         HttpEntity<ContentBody> httpEntity = new HttpEntity<>(contentBody, headers);
 
-        getRestTemplate().postForEntity(sendInBlueApiURL, httpEntity, String.class);
+        ResponseEntity<SendInBlueAPIResponse> sendInBlueResponse = getRestTemplate().postForEntity(sendInBlueApiURL, httpEntity, SendInBlueAPIResponse.class);
+        // TODO: Log the message ID from SendInBlue response body
     }
 }
