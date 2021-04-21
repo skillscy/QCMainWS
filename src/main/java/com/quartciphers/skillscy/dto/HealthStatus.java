@@ -9,11 +9,11 @@ public class HealthStatus {
     private String swaggerURL;
     private String productOwner;
 
-    public HealthStatus(String uri) {
+    public HealthStatus(String uri, String companyName) {
         this.applicationURL = uri;
         this.status = "UP";
         this.swaggerURL = uri.concat("/swagger-ui.html");
-        this.productOwner = "Quart Ciphers";
+        this.productOwner = companyName;
     }
 
     @JsonProperty("ApplicationURL")

@@ -14,6 +14,7 @@ public class WebServiceException extends Exception {
     public WebServiceException(ApplicationCodes appCode, HTTPCodes httpCode) {
         this.applicationCode = appCode;
         this.httpCode = httpCode;
+        this.exceptionType = WebExceptionType.INTERNAL_ERROR;
     }
 
     public WebServiceException(ApplicationCodes appCode, HTTPCodes httpCode, WebExceptionType exceptionType) {

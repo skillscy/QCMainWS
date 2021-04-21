@@ -37,6 +37,9 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
     @Value("${sendinblue.api.key}")
     private String sendInBlueApiKey;
 
+    @Value("${company.name}")
+    private String companyName;
+
     @Value("${mail.body}")
     private String mailBody;
 
@@ -50,7 +53,7 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
 
     /* GET '/youtube' */
     @Override
-    public List<YouTubeCardResponse> getYouTubeVideoInfo(String channelID, int count) throws WebServiceException {
+    public List<YouTubeCardResponse> getYouTubeVideoInfo(String channelID, int count) throws Exception {
 
         // Connecting to YouTube API
         UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(youTubeApiURL)
@@ -81,13 +84,13 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
 
     /* POST '/content-mail' */
     @Override
-    public void sendMessageToClient(MailContent mailContent) throws WebServiceException {
+    public void sendMessageToClient(MailContent mailContent) throws Exception {
 
         // Formatting Content
         ContentBody contentBody = new ContentBody();
 
         ContactInfo sender = new ContactInfo();
-        sender.setName("Quart Ciphers");
+        sender.setName(companyName);
         sender.setEMailID("skillscy.team@gmail.com");
 
         List<ContactInfo> receiverList = new ArrayList<>();
