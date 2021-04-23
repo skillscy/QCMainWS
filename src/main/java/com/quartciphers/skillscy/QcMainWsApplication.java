@@ -42,6 +42,7 @@ public class QcMainWsApplication {
     }
 
     @Bean
+    @LoadBalanced
     public Docket swaggerConfiguration() {
         // Return a prepared docket instance
         return new Docket(DocumentationType.SWAGGER_2)
