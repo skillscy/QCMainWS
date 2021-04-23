@@ -34,6 +34,8 @@ public class WebServiceException extends Exception {
 
         if (this.exceptionType.equals(WebExceptionType.VALIDATION))
             return new ResponseEntity<>(commonResponse, HttpStatus.PRECONDITION_FAILED);
+        else if (this.exceptionType.equals(WebExceptionType.CIRCUIT_BROKEN))
+            return new ResponseEntity<>(commonResponse, HttpStatus.CONFLICT);
 
         return new ResponseEntity<>(commonResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }

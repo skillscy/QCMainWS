@@ -10,7 +10,8 @@ public enum HTTPCodes {
     NOT_FOUND(404, "Requested data not found"),
     PRECONDITION_FAILED(412, "Invalid input parameters"),
     INTERNAL_ERROR(500, "Internal server error"),
-    SERVICE_UNAVAILABLE(503, "Service unavailable");
+    SERVICE_UNAVAILABLE(503, "Service unavailable"),
+    CIRCUIT_BROKEN(512, "Circuit broken! Fallback response");
 
     private int httpCode;
     private String httpCodeDescription;

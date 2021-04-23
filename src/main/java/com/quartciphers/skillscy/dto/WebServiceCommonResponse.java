@@ -2,6 +2,7 @@ package com.quartciphers.skillscy.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.quartciphers.skillscy.vo.HTTPCodes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

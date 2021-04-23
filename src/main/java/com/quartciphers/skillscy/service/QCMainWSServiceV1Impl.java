@@ -8,6 +8,7 @@ import com.quartciphers.skillscy.dto.YouTubeAPI.ItemInfo;
 import com.quartciphers.skillscy.dto.YouTubeAPI.YouTubeAPIResponse;
 import com.quartciphers.skillscy.dto.YouTubeCardResponse;
 import com.quartciphers.skillscy.vo.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -43,13 +44,8 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
     @Value("${mail.body}")
     private String mailBody;
 
-    private static RestTemplate restTemplate;
-
-    private RestTemplate getRestTemplate() {
-        if (QCMainWSServiceV1Impl.restTemplate == null)
-            QCMainWSServiceV1Impl.restTemplate = new RestTemplate();
-        return QCMainWSServiceV1Impl.restTemplate;
-    }
+    @Autowired
+    private RestTemplate restTemplate;
 
     /* GET '/youtube' */
     @Override
@@ -61,7 +57,7 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
                 .queryParam(ApplicationConstants.QPARAM_CHANNEL_ID, channelID)
                 .queryParam(ApplicationConstants.QPARAM_MAX_RESULTS, count);
 
-        ResponseEntity<YouTubeAPIResponse> youTubeResponse = getRestTemplate().getForEntity(uri.toUriString(), YouTubeAPIResponse.class);
+        ResponseEntity<YouTubeAPIResponse> youTubeResponse = restTemplate.getForEntity(uri.toUriString(), YouTubeAPIResponse.class);
 
         // Validating and formatting YouTube response
         List<YouTubeCardResponse> youTubeCardResponse = new ArrayList<>();
@@ -112,7 +108,7 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
 
         HttpEntity<ContentBody> httpEntity = new HttpEntity<>(contentBody, headers);
 
-        ResponseEntity<SendInBlueAPIResponse> sendInBlueResponse = getRestTemplate().postForEntity(sendInBlueApiURL, httpEntity, SendInBlueAPIResponse.class);
+        ResponseEntity<SendInBlueAPIResponse> sendInBlueResponse = restTemplate.postForEntity(sendInBlueApiURL, httpEntity, SendInBlueAPIResponse.class);
         // TODO: Log the message ID from SendInBlue response body
     }
 }

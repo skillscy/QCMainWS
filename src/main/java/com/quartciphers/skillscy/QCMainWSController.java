@@ -1,14 +1,10 @@
 package com.quartciphers.skillscy;
 
-import com.quartciphers.skillscy.dto.HealthStatus;
-import com.quartciphers.skillscy.dto.MailContent;
-import com.quartciphers.skillscy.dto.WebServiceCommonResponse;
-import com.quartciphers.skillscy.dto.YouTubeCardResponse;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import com.quartciphers.skillscy.dto.*;
 import com.quartciphers.skillscy.service.QCMainWSServiceV1;
-import com.quartciphers.skillscy.vo.ApplicationCodes;
-import com.quartciphers.skillscy.vo.HTTPCodes;
-import com.quartciphers.skillscy.vo.Validator;
-import com.quartciphers.skillscy.vo.WebServiceException;
+import com.quartciphers.skillscy.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,10 +39,18 @@ class QCMainWSControllerVersion1 {
 
     @GetMapping(value = "/youtube", produces = "application/json")
     @ApiOperation(value = "This API will return the requested number of latest videos from the requested YouTube channel ID", produces = "application/json", response = YouTubeCardResponse.class)
+    @HystrixCommand(
+            fallbackMethod = "getFallbackLatestYouTubeVideoList",
+            threadPoolKey = "sendMailToClientPool",
+            threadPoolProperties = {
+                    @HystrixProperty(name = "coreSize", value = "20"),
+                    @HystrixProperty(name = "maxQueueSize", value = "10")
+            }
+    )
     public ResponseEntity<WebServiceCommonResponse> getLatestYouTubeVideoList(@RequestHeader("channel_id") String channelID, @RequestHeader(value = "video_count", required = false, defaultValue = "3") int count) {
         try {
             List<YouTubeCardResponse> videosList = service.getYouTubeVideoInfo(channelID, count);
-            return new WebServiceCommonResponse(videosList).response();
+            return new WebServiceCommonResponse(new YouTubeVideoResponse(videosList)).response();
         } catch (WebServiceException wex) {
             return wex.response();
         } catch (Exception ex) {
@@ -56,6 +60,14 @@ class QCMainWSControllerVersion1 {
 
     @PostMapping(value = "/contact-mail", produces = "application/json")
     @ApiOperation(value = "This API will send a mail to the client E-Mail ID", produces = "application/json", response = WebServiceCommonResponse.class)
+    @HystrixCommand(
+            fallbackMethod = "getFallbackMailToClient",
+            threadPoolKey = "sendMailToClientPool",
+            threadPoolProperties = {
+                    @HystrixProperty(name = "coreSize", value = "20"),
+                    @HystrixProperty(name = "maxQueueSize", value = "10")
+            }
+    )
     public ResponseEntity<WebServiceCommonResponse> sendMailToClient(@RequestBody MailContent mailContent) {
         try {
             // Validation
@@ -77,6 +89,14 @@ class QCMainWSControllerVersion1 {
         } catch (Exception ex) {
             return new WebServiceException(ApplicationCodes.INTERNAL_SERVER_ERROR, HTTPCodes.INTERNAL_ERROR).response();
         }
+    }
+
+    public ResponseEntity<WebServiceCommonResponse> getFallbackLatestYouTubeVideoList(@RequestHeader("channel_id") String channelID, @RequestHeader(value = "video_count", required = false, defaultValue = "3") int count) {
+        return new WebServiceException(ApplicationCodes.FALLBACK_DETECTED, HTTPCodes.CIRCUIT_BROKEN, WebExceptionType.CIRCUIT_BROKEN).response();
+    }
+
+    public ResponseEntity<WebServiceCommonResponse> getFallbackMailToClient(@RequestBody MailContent mailContent) {
+        return new WebServiceException(ApplicationCodes.FALLBACK_DETECTED, HTTPCodes.CIRCUIT_BROKEN, WebExceptionType.CIRCUIT_BROKEN).response();
     }
 
 }

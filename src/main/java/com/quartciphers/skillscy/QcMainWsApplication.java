@@ -3,7 +3,13 @@ package com.quartciphers.skillscy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -16,6 +22,9 @@ import java.util.Collections;
 
 @SpringBootApplication
 @EnableSwagger2
+@EnableEurekaClient
+@EnableCircuitBreaker
+@EnableHystrixDashboard
 public class QcMainWsApplication {
 
     @Value("${company.name}")
@@ -23,6 +32,13 @@ public class QcMainWsApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(QcMainWsApplication.class, args);
+    }
+
+    @Bean
+    public RestTemplate getRestTemplate() {
+        HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+        httpComponentsClientHttpRequestFactory.setConnectTimeout(10000); // setting 3s timeout
+        return new RestTemplate(httpComponentsClientHttpRequestFactory);
     }
 
     @Bean
