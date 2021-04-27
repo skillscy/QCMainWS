@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/skillscy-1.0.jar
+web: java -Dserver.port=8081 $JAVA_OPTS -jar build/libs/skillscy-1.0.jar
