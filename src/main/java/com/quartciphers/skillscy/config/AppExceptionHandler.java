@@ -16,7 +16,6 @@ public class AppExceptionHandler {
 
     @ExceptionHandler(WebServiceException.class)
     public ResponseEntity<StatusIndicator> webServiceException(WebServiceException ex) {
-        CommonLogger.error(this.getClass(), "Controller throw -> WebServiceException [".concat(ex.getMessage()).concat("]"));
         StatusIndicator apiResponse = ex.response();
         if (ex.getExceptionType().equals(WebExceptionType.VALIDATION)) {
             CommonLogger.error(this.getClass(), "Validation Exception -> ".concat(HttpStatus.PRECONDITION_FAILED.toString()));
@@ -30,7 +29,6 @@ public class AppExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<StatusIndicator> genericException(Exception ex) {
-        CommonLogger.error(this.getClass(), "Controller throw -> Exception [".concat(ex.getMessage()).concat("]"));
         StatusIndicator apiResponse = new StatusIndicator();
         ErrorResponse errorResponse = new ErrorResponse();
 
