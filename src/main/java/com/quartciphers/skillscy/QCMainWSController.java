@@ -1,13 +1,15 @@
 package com.quartciphers.skillscy;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
-import com.quartciphers.skillscy.dto.*;
+import com.qc.skillscy.commons.dto.HealthStatus;
+import com.qc.skillscy.commons.dto.StatusIndicator;
+import com.qc.skillscy.commons.loggers.CommonLogger;
+import com.qc.skillscy.commons.misc.Validator;
+import com.quartciphers.skillscy.dto.MailContent;
+import com.quartciphers.skillscy.dto.YouTubeCardResponse;
+import com.quartciphers.skillscy.dto.YouTubeVideoResponse;
 import com.quartciphers.skillscy.service.QCMainWSServiceV1;
-import com.quartciphers.skillscy.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -15,88 +17,72 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
 public class QCMainWSController {
-
-    @Value("${company.name}")
-    private String companyName;
 
     @GetMapping(value = "/hello", produces = "application/json")
     @ApiOperation(value = "A hello method which check health", nickname = "Hello method", notes = "This method returns the running status of the application along with the application URL, Swagger URL and other company related information", produces = "application/json", response = HealthStatus.class)
     public ResponseEntity<HealthStatus> helloToHealth() {
-        HealthStatus healthStatus = new HealthStatus(ServletUriComponentsBuilder.fromCurrentContextPath().toUriString(), companyName); // creates HealthStatus object with necessary parameters
+        CommonLogger.info(this.getClass(), "---------- API 'helloToHealth' STARTED ----------");
+        HealthStatus healthStatus = new HealthStatus(ServletUriComponentsBuilder.fromCurrentContextPath().toUriString()); // creates HealthStatus object with necessary parameters
+        CommonLogger.info(this.getClass(), "---------- API 'helloToHealth' COMPLETED ----------");
         return ResponseEntity.ok(healthStatus); // returns the response to the consumer
     }
 
 }
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/v1")
 class QCMainWSControllerVersion1 {
 
     @Autowired
     private QCMainWSServiceV1 service;
 
     @GetMapping(value = "/youtube", produces = "application/json")
-    @ApiOperation(value = "This API will return the requested number of latest videos from the requested YouTube channel ID", produces = "application/json", response = YouTubeCardResponse.class)
-    @HystrixCommand(
-            fallbackMethod = "getFallbackLatestYouTubeVideoList",
-            threadPoolKey = "sendMailToClientPool",
-            threadPoolProperties = {
-                    @HystrixProperty(name = "coreSize", value = "20"),
-                    @HystrixProperty(name = "maxQueueSize", value = "10")
-            }
-    )
-    public ResponseEntity<WebServiceCommonResponse> getLatestYouTubeVideoList(@RequestHeader("channel_id") String channelID, @RequestHeader(value = "video_count", required = false, defaultValue = "3") int count) {
-        try {
-            List<YouTubeCardResponse> videosList = service.getYouTubeVideoInfo(channelID, count);
-            return new WebServiceCommonResponse(new YouTubeVideoResponse(videosList)).response();
-        } catch (WebServiceException wex) {
-            return wex.response();
-        } catch (Exception ex) {
-            return new WebServiceException(ApplicationCodes.INTERNAL_SERVER_ERROR, HTTPCodes.INTERNAL_ERROR).response();
-        }
+    @ApiOperation(value = "This API will return the requested number of latest videos from the requested YouTube channel ID", produces = "application/json", response = YouTubeVideoResponse.class)
+    public ResponseEntity<YouTubeVideoResponse> getLatestYouTubeVideoList(@RequestHeader("channel_id") String channelID, @RequestHeader(value = "video_count", required = false, defaultValue = "3") int count) throws Exception {
+
+        CommonLogger.info(this.getClass(), "---------- API 'getLatestYouTubeVideoList' STARTED ----------");
+
+        // Connecting to service layer
+        CommonLogger.info(this.getClass(), "Connecting to service.getYouTubeVideoInfo...");
+        List<YouTubeCardResponse> videosList = service.getYouTubeVideoInfo(channelID, count);
+
+        // Success Response
+        CommonLogger.info(this.getClass(), "Wrapping up the response");
+        YouTubeVideoResponse apiResponse = new YouTubeVideoResponse(videosList);
+        apiResponse.completed();
+        CommonLogger.info(this.getClass(), "---------- API 'getLatestYouTubeVideoList' COMPLETED ----------");
+        return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping(value = "/contact-mail", produces = "application/json")
-    @ApiOperation(value = "This API will send a mail to the client E-Mail ID", produces = "application/json", response = WebServiceCommonResponse.class)
-    @HystrixCommand(
-            fallbackMethod = "getFallbackMailToClient",
-            threadPoolKey = "sendMailToClientPool",
-            threadPoolProperties = {
-                    @HystrixProperty(name = "coreSize", value = "20"),
-                    @HystrixProperty(name = "maxQueueSize", value = "10")
-            }
-    )
-    public ResponseEntity<WebServiceCommonResponse> sendMailToClient(@RequestBody MailContent mailContent) {
-        try {
-            // Validation
-            Validator.notNull(mailContent);
-            Validator.notNull(mailContent.getClientInfo());
-            Validator.notNull(mailContent.getClientInfo().getName());
-            Validator.notNull(mailContent.getClientInfo().getMailAddress());
-            Validator.notNull(mailContent.getClientInfo().getMailSubject());
-            Validator.notNull(mailContent.getName());
-            Validator.notNull(mailContent.geteMailID());
-            Validator.notNull(mailContent.getPhoneNumber());
-            Validator.notNull(mailContent.getMessage());
+    @ApiOperation(value = "This API will send a mail to the client E-Mail ID", produces = "application/json", response = StatusIndicator.class)
+    public ResponseEntity<StatusIndicator> sendMailToClient(@RequestBody MailContent mailContent) throws Exception {
 
-            // Connecting to service layer
-            service.sendMessageToClient(mailContent);
-            return new WebServiceCommonResponse().response();
-        } catch (WebServiceException wex) {
-            return wex.response();
-        } catch (Exception ex) {
-            return new WebServiceException(ApplicationCodes.INTERNAL_SERVER_ERROR, HTTPCodes.INTERNAL_ERROR).response();
-        }
-    }
+        CommonLogger.info(this.getClass(), "---------- API 'sendMailToClient' STARTED ----------");
 
-    public ResponseEntity<WebServiceCommonResponse> getFallbackLatestYouTubeVideoList(@RequestHeader("channel_id") String channelID, @RequestHeader(value = "video_count", required = false, defaultValue = "3") int count) {
-        return new WebServiceException(ApplicationCodes.FALLBACK_DETECTED, HTTPCodes.CIRCUIT_BROKEN, WebExceptionType.CIRCUIT_BROKEN).response();
-    }
+        // Validation
+        CommonLogger.info(this.getClass(), "Validating body parameters");
+        Validator.notNull(mailContent);
+        Validator.notNull(mailContent.getClientInfo());
+        Validator.notNull(mailContent.getClientInfo().getName());
+        Validator.notNull(mailContent.getClientInfo().getMailAddress());
+        Validator.notNull(mailContent.getClientInfo().getMailSubject());
+        Validator.notNull(mailContent.getName());
+        Validator.notNull(mailContent.geteMailID());
+        Validator.notNull(mailContent.getPhoneNumber());
+        Validator.notNull(mailContent.getMessage());
 
-    public ResponseEntity<WebServiceCommonResponse> getFallbackMailToClient(@RequestBody MailContent mailContent) {
-        return new WebServiceException(ApplicationCodes.FALLBACK_DETECTED, HTTPCodes.CIRCUIT_BROKEN, WebExceptionType.CIRCUIT_BROKEN).response();
+        // Connecting to service layer
+        CommonLogger.info(this.getClass(), "Connecting to service.sendMessageToClient...");
+        service.sendMessageToClient(mailContent);
+
+        // Success Response
+        CommonLogger.info(this.getClass(), "Wrapping up the response");
+        StatusIndicator apiResponse = new StatusIndicator();
+        apiResponse.completed();
+        CommonLogger.info(this.getClass(), "---------- API 'sendMailToClient' COMPLETED ----------");
+        return ResponseEntity.ok(apiResponse);
     }
 
 }

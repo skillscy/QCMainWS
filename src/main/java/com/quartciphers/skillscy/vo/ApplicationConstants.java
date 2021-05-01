@@ -12,5 +12,6 @@ public class ApplicationConstants {
 
     // SendInBlue API
     public static final String HEADER_API_KEY = "api-key";
+    public static final String MAIL_BODY = "<html><head></head><body><b>Name: </b>{0}</br><b>Phone Number: </b>{1}</br><b>E-Mail ID: </b>{2}</br><b>Message: </b>{3}</br>Thank you,</br>Quart Ciphers Team</body></html>";
 
 }

@@ -10,6 +10,7 @@ sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 ext {
@@ -20,13 +21,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-	implementation 'org.springframework.cloud:spring-cloud-starter-loadbalancer'
-	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.2.RELEASE'
-	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix-dashboard:2.2.2.RELEASE'
 
 	// Swagger
 	implementation 'io.springfox:springfox-swagger2:2.9.2'
 	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+
+	// QC Common Library
+	implementation 'com.github.skillscy:QCCommons:v1.3'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
