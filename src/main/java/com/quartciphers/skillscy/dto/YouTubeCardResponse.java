@@ -4,58 +4,58 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class YouTubeCardResponse {
 
-    private String videoTitle;
-    private String videoDescription;
-    private String publishTime;
-    private String videoURL;
-    private YouTubeThumbnails thumbnails;
+    private String title;
+    private String description;
+    private String publishedTime;
+    private String videoPlayURL;
+    private YouTubeThumbnails videoThumbnails;
 
     @JsonProperty("VideoTitle")
-    public String getVideoTitle() {
-        return videoTitle;
+    public String getTitle() {
+        return title;
     }
 
     @JsonProperty("title")
-    public void setVideoTitle(String videoTitle) {
-        this.videoTitle = videoTitle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @JsonProperty("VideoDescription")
-    public String getVideoDescription() {
-        return videoDescription;
+    public String getDescription() {
+        return description;
     }
 
     @JsonProperty("description")
-    public void setVideoDescription(String videoDescription) {
-        this.videoDescription = videoDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @JsonProperty("PublishTime")
-    public String getPublishTime() {
-        return publishTime;
+    public String getPublishedTime() {
+        return publishedTime;
     }
 
     @JsonProperty("publishTime")
-    public void setPublishTime(String publishTime) {
-        this.publishTime = publishTime;
+    public void setPublishedTime(String publishedTime) {
+        this.publishedTime = publishedTime;
     }
 
     @JsonProperty("VideoURL")
-    public String getVideoURL() {
-        return videoURL;
+    public String getVideoPlayURL() {
+        return videoPlayURL;
     }
 
-    public void setVideoURL(String videoURL) {
-        this.videoURL = "https://www.youtube.com/watch?v=".concat(videoURL);
+    public void setVideoPlayURL(String videoPlayURL) {
+        this.videoPlayURL = "https://www.youtube.com/watch?v=".concat(videoPlayURL);
     }
 
     @JsonProperty("Thumbnails")
-    public YouTubeThumbnails getThumbnails() {
-        return thumbnails;
+    public YouTubeThumbnails getVideoThumbnails() {
+        return videoThumbnails;
     }
 
     @JsonProperty("thumbnails")
-    public void setThumbnails(YouTubeThumbnails thumbnails) {
-        this.thumbnails = thumbnails;
+    public void setVideoThumbnails(YouTubeThumbnails videoThumbnails) {
+        this.videoThumbnails = videoThumbnails;
     }
 }

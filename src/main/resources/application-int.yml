@@ -1,0 +1,17 @@
+server:
+  port: ${PORT}
+
+company:
+  product:
+    id: ${PRODUCT_ID}
+  orgws:
+    token:
+      url: ${ORGWS_TOKEN_URL}
+
+youtube:
+  api:
+    key: ${YOUTUBE_API_KEY}
+
+sendinblue:
+  api:
+    key: ${SENDINBLUE_API_KEY}

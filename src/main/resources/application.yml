@@ -1,0 +1,31 @@
+company:
+  name: Quart Ciphers
+
+spring:
+  application:
+    name: MAIN-WS
+  profiles:
+    active: ${PROFILE}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+
+resttemplate:
+  timeout: 10000
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          client:
+            RestTemplate: DEBUG
+youtube:
+  api:
+    url: https://youtube.googleapis.com/youtube/v3/search?part=snippet&order=date
+
+sendinblue:
+  smtp:
+    url: https://api.sendinblue.com/v3/smtp/email
