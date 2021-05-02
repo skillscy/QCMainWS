@@ -6,6 +6,7 @@ import com.qc.skillscy.commons.dto.StatusIndicator;
 import com.qc.skillscy.commons.exceptions.WebExceptionType;
 import com.qc.skillscy.commons.exceptions.WebServiceException;
 import com.qc.skillscy.commons.loggers.CommonLogger;
+import com.qc.skillscy.commons.misc.Validator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -29,6 +30,7 @@ public class AppExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<StatusIndicator> genericException(Exception ex) {
+        CommonLogger.error(this.getClass(), "Exception occurred [".concat(Validator.ignoreNullByString(ex.getMessage())).concat("]"));
         StatusIndicator apiResponse = new StatusIndicator();
         ErrorResponse errorResponse = new ErrorResponse();
 
