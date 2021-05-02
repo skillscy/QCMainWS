@@ -27,7 +27,7 @@ dependencies {
 	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
 
 	// QC Common Library
-	implementation 'com.github.skillscy:QCCommons:v1.3'
+	implementation 'com.github.skillscy:QCCommons:v1.5'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
