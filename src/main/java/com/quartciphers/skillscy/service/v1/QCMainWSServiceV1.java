@@ -1,4 +1,4 @@
-package com.quartciphers.skillscy.service;
+package com.quartciphers.skillscy.service.v1;
 
 import com.quartciphers.skillscy.dto.MailContent;
 import com.quartciphers.skillscy.dto.YouTubeCardResponse;

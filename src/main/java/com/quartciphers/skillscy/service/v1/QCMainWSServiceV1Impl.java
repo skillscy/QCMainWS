@@ -1,4 +1,4 @@
-package com.quartciphers.skillscy.service;
+package com.quartciphers.skillscy.service.v1;
 
 import com.qc.skillscy.commons.codes.ApplicationCodes;
 import com.qc.skillscy.commons.codes.HTTPCodes;
