@@ -18,7 +18,7 @@ import com.quartciphers.skillscy.dto.SendInBlueAPI.SendInBlueAPIResponse;
 import com.quartciphers.skillscy.dto.YouTubeAPI.ItemInfo;
 import com.quartciphers.skillscy.dto.YouTubeAPI.YouTubeAPIResponse;
 import com.quartciphers.skillscy.dto.YouTubeCardResponse;
-import com.quartciphers.skillscy.repository.FirebaseServer;
+import com.quartciphers.skillscy.vo.FirebaseServer;
 import com.quartciphers.skillscy.vo.ApplicationConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
