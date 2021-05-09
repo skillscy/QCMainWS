@@ -8,6 +8,11 @@ company:
     token:
       url: ${ORGWS_TOKEN_URL}
 
+firestore:
+  database:
+    url: ${DB_URL}
+    credentials: ${DB_SECRET}
+
 youtube:
   api:
     key: ${YOUTUBE_API_KEY}

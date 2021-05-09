@@ -1,38 +1,23 @@
-package com.quartciphers.skillscy;
+package com.quartciphers.skillscy.controller;
 
-import com.qc.skillscy.commons.dto.HealthStatus;
 import com.qc.skillscy.commons.dto.StatusIndicator;
 import com.qc.skillscy.commons.loggers.CommonLogger;
+import com.qc.skillscy.commons.misc.QcUtils;
 import com.qc.skillscy.commons.misc.Validator;
 import com.quartciphers.skillscy.dto.MailContent;
 import com.quartciphers.skillscy.dto.YouTubeCardResponse;
 import com.quartciphers.skillscy.dto.YouTubeVideoResponse;
-import com.quartciphers.skillscy.service.QCMainWSServiceV1;
+import com.quartciphers.skillscy.service.v1.QCMainWSServiceV1;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
 @RestController
-public class QCMainWSController {
-
-    @GetMapping(value = "/hello", produces = "application/json")
-    @ApiOperation(value = "A hello method which check health", nickname = "Hello method", notes = "This method returns the running status of the application along with the application URL, Swagger URL and other company related information", produces = "application/json", response = HealthStatus.class)
-    public ResponseEntity<HealthStatus> helloToHealth() {
-        CommonLogger.info(this.getClass(), "---------- API 'helloToHealth' STARTED ----------");
-        HealthStatus healthStatus = new HealthStatus(ServletUriComponentsBuilder.fromCurrentContextPath().toUriString()); // creates HealthStatus object with necessary parameters
-        CommonLogger.info(this.getClass(), "---------- API 'helloToHealth' COMPLETED ----------");
-        return ResponseEntity.ok(healthStatus); // returns the response to the consumer
-    }
-
-}
-
-@RestController
 @RequestMapping("/v1")
-class QCMainWSControllerVersion1 {
+public class MainWSControllerV1 {
 
     @Autowired
     private QCMainWSServiceV1 service;
@@ -83,6 +68,14 @@ class QCMainWSControllerVersion1 {
         apiResponse.completed();
         CommonLogger.info(this.getClass(), "---------- API 'sendMailToClient' COMPLETED ----------");
         return ResponseEntity.ok(apiResponse);
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<StatusIndicator> addToDatabase(@RequestParam("ans") String value) throws Exception {
+        CommonLogger.info(this.getClass(), "---------- API 'addToDatabase' STARTED ----------");
+        service.writeDB(value);
+        CommonLogger.info(this.getClass(), "---------- API 'addToDatabase' COMPLETED ----------");
+        return ResponseEntity.ok(QcUtils.defaultSuccessBody());
     }
 
 }

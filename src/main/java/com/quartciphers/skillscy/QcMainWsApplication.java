@@ -34,7 +34,7 @@ public class QcMainWsApplication {
     @Bean
     public RestTemplate getRestTemplate() {
         HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-        httpComponentsClientHttpRequestFactory.setConnectTimeout(restTemplateTimeout); // setting 3s timeout
+        httpComponentsClientHttpRequestFactory.setConnectTimeout(restTemplateTimeout);
         return new RestTemplate(httpComponentsClientHttpRequestFactory);
     }
 

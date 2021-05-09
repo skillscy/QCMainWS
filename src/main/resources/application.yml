@@ -5,12 +5,14 @@ spring:
   application:
     name: MAIN-WS
   profiles:
-    active: ${PROFILE}
+    active: ${PROFILE:local}
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
+  instance:
+    hostname: localhost
 
 resttemplate:
   timeout: 10000

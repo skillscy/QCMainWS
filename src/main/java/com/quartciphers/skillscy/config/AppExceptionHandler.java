@@ -6,6 +6,7 @@ import com.qc.skillscy.commons.dto.StatusIndicator;
 import com.qc.skillscy.commons.exceptions.WebExceptionType;
 import com.qc.skillscy.commons.exceptions.WebServiceException;
 import com.qc.skillscy.commons.loggers.CommonLogger;
+import com.qc.skillscy.commons.misc.Validator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,7 +17,6 @@ public class AppExceptionHandler {
 
     @ExceptionHandler(WebServiceException.class)
     public ResponseEntity<StatusIndicator> webServiceException(WebServiceException ex) {
-        CommonLogger.error(this.getClass(), "Controller throw -> WebServiceException [".concat(ex.getMessage()).concat("]"));
         StatusIndicator apiResponse = ex.response();
         if (ex.getExceptionType().equals(WebExceptionType.VALIDATION)) {
             CommonLogger.error(this.getClass(), "Validation Exception -> ".concat(HttpStatus.PRECONDITION_FAILED.toString()));
@@ -30,7 +30,7 @@ public class AppExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<StatusIndicator> genericException(Exception ex) {
-        CommonLogger.error(this.getClass(), "Controller throw -> Exception [".concat(ex.getMessage()).concat("]"));
+        CommonLogger.error(this.getClass(), "Exception occurred [".concat(Validator.ignoreNullByString(ex.getMessage())).concat("]"));
         StatusIndicator apiResponse = new StatusIndicator();
         ErrorResponse errorResponse = new ErrorResponse();
 
