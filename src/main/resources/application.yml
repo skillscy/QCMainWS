@@ -5,7 +5,7 @@ spring:
   application:
     name: MAIN-WS
   profiles:
-    active: ${PROFILE}
+    active: ${PROFILE:local}
 
 eureka:
   client:
