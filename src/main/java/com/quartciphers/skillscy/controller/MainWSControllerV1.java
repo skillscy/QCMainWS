@@ -2,6 +2,7 @@ package com.quartciphers.skillscy.controller;
 
 import com.qc.skillscy.commons.dto.StatusIndicator;
 import com.qc.skillscy.commons.loggers.CommonLogger;
+import com.qc.skillscy.commons.misc.QcUtils;
 import com.qc.skillscy.commons.misc.Validator;
 import com.quartciphers.skillscy.dto.MailContent;
 import com.quartciphers.skillscy.dto.YouTubeCardResponse;
@@ -67,6 +68,14 @@ public class MainWSControllerV1 {
         apiResponse.completed();
         CommonLogger.info(this.getClass(), "---------- API 'sendMailToClient' COMPLETED ----------");
         return ResponseEntity.ok(apiResponse);
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<StatusIndicator> addToDatabase(@RequestParam("ans") String value) throws Exception {
+        CommonLogger.info(this.getClass(), "---------- API 'addToDatabase' STARTED ----------");
+        service.writeDB(value);
+        CommonLogger.info(this.getClass(), "---------- API 'addToDatabase' COMPLETED ----------");
+        return ResponseEntity.ok(QcUtils.defaultSuccessBody());
     }
 
 }

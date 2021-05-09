@@ -11,4 +11,6 @@ public interface QCMainWSServiceV1 {
 
     void sendMessageToClient(final MailContent mailContent) throws Exception;
 
+    void writeDB(String value) throws Exception;
+
 }

@@ -1,5 +1,10 @@
 package com.quartciphers.skillscy.service.v1;
 
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
+import com.google.firebase.cloud.FirestoreClient;
 import com.qc.skillscy.commons.codes.ApplicationCodes;
 import com.qc.skillscy.commons.codes.HTTPCodes;
 import com.qc.skillscy.commons.exceptions.WebExceptionType;
@@ -13,6 +18,7 @@ import com.quartciphers.skillscy.dto.SendInBlueAPI.SendInBlueAPIResponse;
 import com.quartciphers.skillscy.dto.YouTubeAPI.ItemInfo;
 import com.quartciphers.skillscy.dto.YouTubeAPI.YouTubeAPIResponse;
 import com.quartciphers.skillscy.dto.YouTubeCardResponse;
+import com.quartciphers.skillscy.repository.FirebaseServer;
 import com.quartciphers.skillscy.vo.ApplicationConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,9 +31,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
@@ -43,6 +47,12 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
 
     @Value("${sendinblue.api.key}")
     private String sendInBlueApiKey;
+
+    @Value("${firestore.database.url}")
+    private String databaseURL;
+
+    @Value("${firestore.database.credentials}")
+    private String databaseSecret;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -144,4 +154,20 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
             throw new WebServiceException(ApplicationCodes.NO_BODY_FOUND, HTTPCodes.NOT_FOUND, WebExceptionType.SERVICE_CALL);
         }
     }
+
+    @Override
+    public void writeDB(String name) throws Exception {
+        new FirebaseServer().initalize(databaseURL, databaseSecret);
+        Firestore db = FirestoreClient.getFirestore();
+
+        DocumentReference docRef = db.collection("users").document("001");
+        Map<String, Object> data = new HashMap<>();
+        data.put("first", name);
+        data.put("last", "Lovelace");
+        data.put("born", 1815);
+
+        ApiFuture<WriteResult> result = docRef.set(data);
+        System.out.println("Update time : " + result.get().getUpdateTime());
+    }
+
 }
