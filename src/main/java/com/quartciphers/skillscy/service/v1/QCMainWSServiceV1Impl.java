@@ -11,6 +11,7 @@ import com.qc.skillscy.commons.exceptions.WebExceptionType;
 import com.qc.skillscy.commons.exceptions.WebServiceException;
 import com.qc.skillscy.commons.loggers.CommonLogger;
 import com.qc.skillscy.commons.misc.QcSwagger;
+import com.quartciphers.skillscy.config.FirebaseServer;
 import com.quartciphers.skillscy.dto.MailContent;
 import com.quartciphers.skillscy.dto.SendInBlueAPI.ContactInfo;
 import com.quartciphers.skillscy.dto.SendInBlueAPI.ContentBody;
@@ -18,10 +19,10 @@ import com.quartciphers.skillscy.dto.SendInBlueAPI.SendInBlueAPIResponse;
 import com.quartciphers.skillscy.dto.YouTubeAPI.ItemInfo;
 import com.quartciphers.skillscy.dto.YouTubeAPI.YouTubeAPIResponse;
 import com.quartciphers.skillscy.dto.YouTubeCardResponse;
-import com.quartciphers.skillscy.repository.FirebaseServer;
 import com.quartciphers.skillscy.vo.ApplicationConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -59,6 +60,7 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
 
     /* GET '/youtube' */
     @Override
+    @Cacheable(value = "YouTubeResponse", key = "'YouTubeResponse'+#channelID")
     public List<YouTubeCardResponse> getYouTubeVideoInfo(String channelID, int count) throws Exception {
 
         // Connecting to YouTube API
