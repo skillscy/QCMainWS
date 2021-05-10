@@ -1,9 +1,10 @@
-package com.quartciphers.skillscy.vo;
+package com.quartciphers.skillscy.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.qc.skillscy.commons.loggers.CommonLogger;
+import com.quartciphers.skillscy.vo.ApplicationCodesLocal;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
