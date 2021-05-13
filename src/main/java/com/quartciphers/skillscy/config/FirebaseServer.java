@@ -3,6 +3,10 @@ package com.quartciphers.skillscy.config;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.qc.skillscy.commons.codes.ApplicationCodes;
+import com.qc.skillscy.commons.codes.HTTPCodes;
+import com.qc.skillscy.commons.exceptions.WebExceptionType;
+import com.qc.skillscy.commons.exceptions.WebServiceException;
 import com.qc.skillscy.commons.loggers.CommonLogger;
 import com.quartciphers.skillscy.vo.ApplicationCodesLocal;
 
@@ -13,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 
 public class FirebaseServer {
 
-    public void initalize(String url, String credentials) throws Exception {
+    public void initialize(String url, String credentials) throws Exception {
         FirebaseOptions options = null;
         CommonLogger.info(FirebaseServer.class, "Parsing database secret to InputStream...");
         InputStream credentialsStream = new ByteArrayInputStream(credentials.getBytes(StandardCharsets.UTF_8));
@@ -23,8 +27,7 @@ public class FirebaseServer {
         try {
             googleCredentials = GoogleCredentials.fromStream(credentialsStream);
         } catch (IOException e) {
-            throw new Exception(ApplicationCodesLocal.FIREBASE_GOOGLE_CREDENTIALS_STREAM_ERROR.getAppCodeDescription());
-            //throw new WebServiceException(ApplicationCodes.FIREBASE_GOOGLE_CREDENTIALS_STREAM_ERROR, HTTPCodes.INTERNAL_ERROR, WebExceptionType.DATABASE_ERROR);
+            throw new WebServiceException(ApplicationCodes.FIREBASE_GOOGLE_CREDENTIALS_STREAM_ERROR, HTTPCodes.INTERNAL_ERROR, WebExceptionType.DATABASE_ERROR);
         }
 
         CommonLogger.info(FirebaseServer.class, "Building FirebaseOptions...");

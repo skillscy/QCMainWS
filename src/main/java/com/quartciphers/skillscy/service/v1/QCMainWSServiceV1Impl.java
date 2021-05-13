@@ -11,6 +11,7 @@ import com.qc.skillscy.commons.exceptions.WebExceptionType;
 import com.qc.skillscy.commons.exceptions.WebServiceException;
 import com.qc.skillscy.commons.loggers.CommonLogger;
 import com.qc.skillscy.commons.misc.QcSwagger;
+import com.qc.skillscy.commons.misc.Validator;
 import com.quartciphers.skillscy.config.FirebaseServer;
 import com.quartciphers.skillscy.dto.MailContent;
 import com.quartciphers.skillscy.dto.SendInBlueAPI.ContactInfo;
@@ -76,10 +77,10 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
 
         // Validating and formatting YouTube response
         List<YouTubeCardResponse> youTubeCardResponse = new ArrayList<>();
-        if (youTubeResponse.getBody() != null) {
+        if (Validator.isNotNull(youTubeResponse.getBody())) {
             CommonLogger.info(this.getClass(), "Body found in API response");
 
-            if (youTubeResponse.getBody().getVideoList() != null) {
+            if (Validator.isNotNull(youTubeResponse.getBody().getVideoList())) {
                 CommonLogger.warning(this.getClass(), "Video list object found in API response");
 
                 if (youTubeResponse.getBody().getVideoList().isEmpty()) {
@@ -149,7 +150,7 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
         ResponseEntity<SendInBlueAPIResponse> sendInBlueResponse = restTemplate.postForEntity(sendInBlueApiURL, httpEntity, SendInBlueAPIResponse.class);
         CommonLogger.info(this.getClass(), "Sendinblue API response received successfully");
 
-        if (sendInBlueResponse.getBody() != null) {
+        if (Validator.isNotNull(sendInBlueResponse.getBody())) {
             CommonLogger.info(this.getClass(), "Received Message ID = [".concat(sendInBlueResponse.getBody().getMessageID()).concat("]"));
         } else {
             CommonLogger.warning(this.getClass(), "Body not found in API response");
@@ -159,7 +160,7 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
 
     @Override
     public void writeDB(String name) throws Exception {
-        new FirebaseServer().initalize(databaseURL, databaseSecret);
+        new FirebaseServer().initialize(databaseURL, databaseSecret);
         Firestore db = FirestoreClient.getFirestore();
 
         DocumentReference docRef = db.collection("users").document("001");
@@ -169,7 +170,7 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
         data.put("born", 1815);
 
         ApiFuture<WriteResult> result = docRef.set(data);
-        System.out.println("Update time : " + result.get().getUpdateTime());
+        CommonLogger.info(QCMainWSServiceV1Impl.class, "Update time : " + result.get().getUpdateTime());
     }
 
 }
