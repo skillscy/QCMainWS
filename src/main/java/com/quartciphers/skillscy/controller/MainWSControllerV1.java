@@ -71,9 +71,9 @@ public class MainWSControllerV1 {
     }
 
     @GetMapping("/check")
-    public ResponseEntity<StatusIndicator> addToDatabase(@RequestParam("ans") String value) throws Exception {
+    public ResponseEntity<StatusIndicator> addToDatabase(@RequestParam("from") String fromID, @RequestParam("to") String toID, @RequestParam("message") String message) throws Exception {
         CommonLogger.info(this.getClass(), "---------- API 'addToDatabase' STARTED ----------");
-        service.writeDB(value);
+        service.writeDB(fromID, toID, message);
         CommonLogger.info(this.getClass(), "---------- API 'addToDatabase' COMPLETED ----------");
         return ResponseEntity.ok(QcUtils.defaultSuccessBody());
     }

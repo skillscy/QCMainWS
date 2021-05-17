@@ -37,7 +37,7 @@ dependencies {
 	implementation 'com.google.firebase:firebase-admin:7.2.0'
 
 	// QC Common Library
-	implementation 'com.github.skillscy:QCCommons:1.10'
+	implementation 'com.github.skillscy:QCCommons:1.15'
 
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
