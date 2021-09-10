@@ -11,8 +11,15 @@ eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
+    serviceUrl:
+      defaultZone: ${EUREKA_URL}/eureka/
   instance:
-    hostname: localhost
+    hostname: ${DOMAIN_NAME}
+    nonSecurePort: 80
+
+security:
+  user:
+    password: ${eureka.password}
 
 resttemplate:
   timeout: 10000
