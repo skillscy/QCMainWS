@@ -13,7 +13,7 @@ public class MainWSController {
 
     @GetMapping(value = "/hello", produces = "application/json")
     @ApiOperation(value = "A hello method which check health", nickname = "Hello method", notes = "This method returns the running status of the application.", produces = "application/json", response = HealthStatus.class)
-    public ResponseEntity<HealthStatus> helloToHealth() {
+    public ResponseEntity<HealthStatus> helloToHealth() throws Exception {
         CommonLogger.info(this.getClass(), "---------- MainWS API 'helloToHealth' STARTED ----------");
         HealthStatus healthStatus = new HealthStatus(ServletUriComponentsBuilder.fromCurrentContextPath().toUriString()); // creates HealthStatus object with necessary parameters
         CommonLogger.info(this.getClass(), "---------- MainWS API 'helloToHealth' COMPLETED ----------");

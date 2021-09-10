@@ -7,13 +7,33 @@ import com.qc.skillscy.commons.exceptions.WebExceptionType;
 import com.qc.skillscy.commons.exceptions.WebServiceException;
 import com.qc.skillscy.commons.loggers.CommonLogger;
 import com.qc.skillscy.commons.misc.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.servlet.http.HttpServletRequest;
+
 @ControllerAdvice
 public class AppExceptionHandler {
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+
+    private boolean checkStackTrace() {
+        String value = httpServletRequest.getHeader("stack_trace");
+        if ("true".equalsIgnoreCase(value)) {
+            CommonLogger.info(AppExceptionHandler.class, "[stack_trace] header has value 'true'");
+            return true;
+        } else if (value == null || "false".equalsIgnoreCase(value)) {
+            CommonLogger.info(AppExceptionHandler.class,"[stack_trace] header is not found or has value 'false'");
+            return false;
+        } else {
+            CommonLogger.warning(AppExceptionHandler.class, "[stack_trace] headers doesn't contain a value among true/ false");
+            return false;
+        }
+    }
 
     @ExceptionHandler(WebServiceException.class)
     public ResponseEntity<StatusIndicator> webServiceException(WebServiceException ex) {
@@ -25,6 +45,11 @@ public class AppExceptionHandler {
             CommonLogger.error(this.getClass(), "Circuit Broken -> ".concat(HttpStatus.CONFLICT.toString()));
             return new ResponseEntity<>(apiResponse, HttpStatus.CONFLICT);
         }
+
+        if (checkStackTrace()) {
+            ex.printStackTrace();
+        }
+
         return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -39,6 +64,11 @@ public class AppExceptionHandler {
         apiResponse.setError(errorResponse);
 
         CommonLogger.error(this.getClass(), "Exception -> ".concat(HttpStatus.INTERNAL_SERVER_ERROR.toString()));
+
+        if (checkStackTrace()) {
+            ex.printStackTrace();
+        }
+
         return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

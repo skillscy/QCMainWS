@@ -1,17 +1,18 @@
 package com.quartciphers.skillscy.service.v1;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.Timestamp;
+import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.WriteResult;
-import com.google.firebase.cloud.FirestoreClient;
 import com.qc.skillscy.commons.codes.ApplicationCodes;
 import com.qc.skillscy.commons.codes.HTTPCodes;
+import com.qc.skillscy.commons.dto.LookupDocument;
 import com.qc.skillscy.commons.exceptions.WebExceptionType;
 import com.qc.skillscy.commons.exceptions.WebServiceException;
 import com.qc.skillscy.commons.loggers.CommonLogger;
-import com.qc.skillscy.commons.misc.QcSwagger;
-import com.quartciphers.skillscy.config.FirebaseServer;
+import com.qc.skillscy.commons.misc.*;
 import com.quartciphers.skillscy.dto.MailContent;
 import com.quartciphers.skillscy.dto.SendInBlueAPI.ContactInfo;
 import com.quartciphers.skillscy.dto.SendInBlueAPI.ContentBody;
@@ -19,6 +20,7 @@ import com.quartciphers.skillscy.dto.SendInBlueAPI.SendInBlueAPIResponse;
 import com.quartciphers.skillscy.dto.YouTubeAPI.ItemInfo;
 import com.quartciphers.skillscy.dto.YouTubeAPI.YouTubeAPIResponse;
 import com.quartciphers.skillscy.dto.YouTubeCardResponse;
+import com.quartciphers.skillscy.dto.repository.FeedbackDB;
 import com.quartciphers.skillscy.vo.ApplicationConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,10 +78,10 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
 
         // Validating and formatting YouTube response
         List<YouTubeCardResponse> youTubeCardResponse = new ArrayList<>();
-        if (youTubeResponse.getBody() != null) {
+        if (Validator.isNotNull(youTubeResponse.getBody())) {
             CommonLogger.info(this.getClass(), "Body found in API response");
 
-            if (youTubeResponse.getBody().getVideoList() != null) {
+            if (Validator.isNotNull(youTubeResponse.getBody().getVideoList())) {
                 CommonLogger.warning(this.getClass(), "Video list object found in API response");
 
                 if (youTubeResponse.getBody().getVideoList().isEmpty()) {
@@ -149,7 +151,7 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
         ResponseEntity<SendInBlueAPIResponse> sendInBlueResponse = restTemplate.postForEntity(sendInBlueApiURL, httpEntity, SendInBlueAPIResponse.class);
         CommonLogger.info(this.getClass(), "Sendinblue API response received successfully");
 
-        if (sendInBlueResponse.getBody() != null) {
+        if (Validator.isNotNull(sendInBlueResponse.getBody())) {
             CommonLogger.info(this.getClass(), "Received Message ID = [".concat(sendInBlueResponse.getBody().getMessageID()).concat("]"));
         } else {
             CommonLogger.warning(this.getClass(), "Body not found in API response");
@@ -158,18 +160,23 @@ public class QCMainWSServiceV1Impl implements QCMainWSServiceV1 {
     }
 
     @Override
-    public void writeDB(String name) throws Exception {
-        new FirebaseServer().initalize(databaseURL, databaseSecret);
-        Firestore db = FirestoreClient.getFirestore();
+    public void writeDB(String senderID, String receivedID, String feedback) throws Exception {
 
-        DocumentReference docRef = db.collection("users").document("001");
-        Map<String, Object> data = new HashMap<>();
-        data.put("first", name);
-        data.put("last", "Lovelace");
-        data.put("born", 1815);
+        Firestore db = FirebaseServer.start().initialize(databaseURL, databaseSecret);
 
-        ApiFuture<WriteResult> result = docRef.set(data);
-        System.out.println("Update time : " + result.get().getUpdateTime());
+        String currentID = FirebaseDB.connect().getLatestIDFromLookupDocument(db, "comments");
+        String newID = QcUtils.generateNextCommentsID(currentID);
+
+        FeedbackDB data = new FeedbackDB();
+        data.setSenderID(senderID);
+        data.setReceiverID(receivedID);
+        data.setFeedback(feedback);
+        data.setTimeOfCreation(Timestamp.now());
+
+        ApiFuture<WriteResult> result = db.collection("comments").document(newID).set(data.dbValue());
+        CommonLogger.info(QCMainWSServiceV1Impl.class, "Update time : " + result.get().getUpdateTime());
+
+        FirebaseDB.connect().updateLatestIDToLookupDocument(db, "comments", newID);
     }
 
 }
